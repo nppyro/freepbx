@@ -1,3 +1,20 @@
+#
+#
+#
+adduser asterisk -M -c "Asterisk User"
+sysctl -w net.ipv6.conf.default.disable_ipv6=1
+sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/sysconfig/selinux
+sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/selinux/config
+setenforce 0
+wait ${!}
+
+yum -y update
+yum -y groupinstall core base "Development Tools"
+
+#
+#
+#
 # Installer Script to take a stock Centos 6.4 64bit to a FreePBX Distro 4.211.64-1 release.
 # Once completed you can use the upgrade scripts for version track 4.211.64
 # To keep your system updated.
@@ -14,7 +31,7 @@
 # Set some Variable
 echo "Set some Variables needed for install time"
 brand=FreePBXDistro
-version=4.211.64-1
+version=10.13.66
 ###########################################################################
 echo
 echo "Moving to Next Step"
@@ -50,48 +67,48 @@ rm -rf /etc/yum.repos.d/*
 #
 [base]
 name=CentOS-$releasever - Base
-mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=os
-#baseurl=http://yum.freepbxdistro.org/centos/$releasever/os/$basearch/
+#mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=os
+baseurl=http://yum.freepbxdistro.org/centos/6.8/os/$basearch/
 gpgcheck=0
 enabled=1
 
 #released updates
 [updates]
 name=CentOS-$releasever - Updates
-mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=updates
-#baseurl=http://yum.freepbxdistro.org/centos/$releasever/updates/$basearch/
+#mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=updates
+baseurl=http://yum.freepbxdistro.org/centos/6.8/updates/$basearch/
 gpgcheck=0
 enabled=1
 
 #additional packages that may be useful
 [extras]
 name=CentOS-$releasever - Extras
-mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=extras
-#baseurl=http://yum.freepbxdistro.org/centos/$releasever/extras/$basearch/
+#mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=extras
+baseurl=http://yum.freepbxdistro.org/centos/6.8/extras/$basearch/
 gpgcheck=0
 enabled=1
 
 #additional packages that extend functionality of existing packages
 [centosplus]
 name=CentOS-$releasever - Plus
-mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=centosplus
-#baseurl=http://yum.freepbxdistro.org/centos/$releasever/centosplus/$basearch/
+#mirrorlist=http://mirrorlist.freepbxdistro.org/?release=6.4&arch=$basearch&repo=centosplus
+baseurl=http://yum.freepbxdistro.org/centos/6.8/centosplus/$basearch/
 gpgcheck=0
 enabled=0
 
 #Core PBX Packages
 [pbx]
 name=pbx
-mirrorlist=http://mirrorlist.freepbxdistro.org/?pbxver=4.211.64&release=6.4&arch=$basearch&repo=pbx
-#baseurl=http://yum.freepbxdistro.org/pbx/4.211.64/$basearch/
+#mirrorlist=http://mirrorlist.freepbxdistro.org/?pbxver=4.211.64&release=6.4&arch=$basearch&repo=pbx
+baseurl=http://yum.freepbxdistro.org/pbx/10.13.66/$basearch/
 gpgcheck=0
 enabled=1
 
 #Schmooze Commercial Packages
 [schmooze-commercial]
 name=schmooze-commercial
-mirrorlist=  http://mirrorlist.schmoozecom.net/?release=6.4&arch=$basearch&repo=schmooze-commercial
-#baseurl=http://yum.schmoozecom.net/schmooze-commercial/$release/$basearch/
+#mirrorlist=  http://mirrorlist.schmoozecom.net/?release=6.4&arch=$basearch&repo=schmooze-commercial
+baseurl=http://yum.schmoozecom.net/schmooze-commercial/6/$basearch/
 gpgcheck=0
 enabled=1
 EOTT
@@ -112,7 +129,7 @@ echo " yum install needed packages"
 yum -y install sgpio mdadm
 
 # NOTE: The Kernel packages need to match what we tell Sangoma to compile Wanpipe against or we will have issues
-yum -y install kernel-2.6.32-358.0.1.el6 kernel-headers-2.6.32-358.0.1.el6 kernel-devel-2.6.32-358.0.1.el6
+#yum -y install kernel-2.6.32-358.0.1.el6 kernel-headers-2.6.32-358.0.1.el6 kernel-devel-2.6.32-358.0.1.el6
 
 # Vim goodies
 yum -y install vim-enhanced
@@ -205,7 +222,7 @@ yum -y install prosody
 yum -y install libsrtp-devel libsrtp
 
 # Sangoma Wanpipe
-yum -y install wanpipe
+# yum -y install wanpipe
 ###########################################################################
 echo
 echo "Moving to Next Step"
